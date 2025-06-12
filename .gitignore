@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -192,3 +193,66 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+=======
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+
+# 仮想環境
+venv/
+env/
+.venv/
+ENV/
+*.env
+
+# エディタ・IDE設定
+.vscode/
+*.swp
+
+# OSファイル
+.DS_Store
+Thumbs.db
+
+# ログファイル
+*.log
+*.log.*.gz
+logs/
+
+# ソケットファイル
+*.sock
+
+# マイグレーションキャッシュ
+migrations/__pycache__/
+
+# 機密ファイル・設定ファイル
+*.key
+*.pem
+*.crt
+*.p12
+*.jks
+*.der
+*.pfx
+*.db
+*.sqlite3
+
+# セキュア情報を含む JSON や設定ファイル（除外推奨）
+*.json
+!README.json  # ← README用に例外追加したい場合のみ
+!*.sample.json  # サンプル設定はOK
+
+# 特定ファイル除外
+mailsystem.env
+category_config.json
+api_config.json
+email_notebook_section_full_final_dedup_sorted.json
+notebooks_all_info.json
+notebooks_info.json
+churchill-c-mail-management.json
+plucky-function-435104-e7-4732c679fe8f.json
+
+# テンプレートキャッシュ (Flask)
+*.html.pyc
+*.html~  # 編集中の一時ファイル
+>>>>>>> 4b899d6 (Initial commit)

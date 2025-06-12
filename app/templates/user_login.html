@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザーログイン</title>
+    <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
+    <!-- font set -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- bootstrap5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link  href="../static/css/login.css" rel="stylesheet">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKTFPFB7YJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-TKTFPFB7YJ');
+    </script>
+    <!-- reCAPTCHAv3 -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LfuYBIpAAAAAHxpoOp_KBmJ5ZDQ1_1H3CH0Yxjh"></script>
+    <script>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LfuYBIpAAAAAHxpoOp_KBmJ5ZDQ1_1H3CH0Yxjh', { action: 'submit' }).then(function(token) {
+                fetch('https://services.sunflower-t-c-jp.com/user_check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: token
+                    })
+                }).then(response => response.json())
+                .then(data => console.log(data));
+            });
+        });
+    </script>
+</head>
+<body class="text-center">
+    <main class="container">
+        <div id="app">
+            <div class="row justify-content-center">
+                <div class="form-signin m-auto">
+                    <form @submit.prevent="onSubmit">
+                        <div class="logo-text-container mb-4">
+                            <img class="logo-img" src="static/img/favicon.png" alt="ロゴ" width="60" height="60" loading="lazy">
+                            <span class="logo-text">QuickNote</span>
+                        </div>
+                        <h4 class="h3 mb-3 fw-bolder">ユーザーログイン</h4>
+                        <p v-if="error" class="text-danger">{{ error }}</p>
+                        
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="floatingMail" v-model="email" name="email" placeholder="name@example.com" autocomplete="email" required>
+                            <label for="floatingMail" class="label-with-icon">
+                            <img src="static/svg/mail_40dp_FILL0_wght400_GRAD0_opsz40.svg" alt="" width="24" height="24" loading="lazy">
+                            メールアドレス
+                            </label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="floatingUserId" v-model="userid" name="userid" placeholder="ユーザーID" autocomplete="username" required>
+                            <label for="floatingUserId" class="label-with-icon">
+                            <img src="static/svg/assignment_ind_40dp_FILL0_wght400_GRAD0_opsz40.svg" alt="" width="24" height="24" loading="lazy">
+                            ユーザーID
+                            </label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="password" class="form-control" id="floatingPassword" v-model="password" name="password" placeholder="パスワード" autocomplete="current-password" required>
+                            <label for="floatingPassword" class="label-with-icon">
+                            <img src="static/svg/passkey_40dp_FILL0_wght400_GRAD0_opsz40.svg" alt="" width="24" height="24" loading="lazy">
+                            パスワード
+                            </label>
+                        </div>
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="floatingnunber" v-model="totp" name="totp" placeholder="6桁の数字" autocomplete="one-time-code" required>
+                            <label for="floatingnunber" class="label-with-icon">
+                            <img src="static/svg/security_key_40dp_FILL0_wght400_GRAD0_opsz24.svg" alt="" width="24" height="24" loading="lazy">
+                            TOTP
+                            </label>
+                        </div>
+                        <input type="hidden" name="recaptchaToken" id="recaptchaToken">
+                        <button type="submit" class="mt-3 w-100 btn btn-lg btn-primary" id="submitButton">ログイン</button>
+                        <!-- <a href="/signup" role="button" class="mt-3 w-100 btn btn-lg btn btn-outline-success">新規登録</a> -->
+                        <!-- <a href="/admin_login" role="button" class="mt-3 w-100 btn btn-lg btn btn-outline-success" id="userLoginButton">Ｔ管理者ログイン</a> -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="main-footer">
+        <div class="float-center d-none d-sm-block">
+            <b>Version</b> 1.0.0
+        </div>
+        <strong>Copyright &copy; 2024 <a style="color: #fff;">Sunflower T&C,Inc</a>.</strong> All rights reserved.
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    email: '',
+                    userid: '',
+                    password: '',
+                    totp: '',
+                    recaptchaToken: '',
+                    error: '',
+                    showPassword: false,  // パスワードの表示・非表示状態を管理
+                };
+            },
+            methods: {
+                // togglePasswordVisibility() {
+                //     this.showPassword = !this.showPassword;  // 表示・非表示を切り替える
+                // },
+                onSubmit() {
+                    grecaptcha.ready(() => {
+                        grecaptcha.execute('6LfuYBIpAAAAAHxpoOp_KBmJ5ZDQ1_1H3CH0Yxjh', { action: 'submit' }).then(token => {
+                            this.recaptchaToken = token;
+                            this.submitForm();
+                        });
+                    });
+                },
+                submitForm() {
+                    fetch('/user_login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: this.email,
+                            userid: this.userid,
+                            password: this.password,
+                            totp: this.totp,
+                            recaptchaToken: this.recaptchaToken
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                          window.location.href = data.redirect;
+                            // window.location.href = '/face-top';
+                        } else {
+                            this.error = data.message || 'ログインに失敗しました';
+                            this.showErrorNotification(this.error);
+                        }
+                    })
+                    .catch(error => {
+                        this.error = 'エラーが発生しました。再度お試しください。';
+                        this.showErrorNotification(this.error);
+                    });
+                },
+                showErrorNotification(message) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ログインに失敗しました',
+                        text: message,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '#3085d6', // (オプション) ボタンの色
+                        customClass: {
+                            popup: 'my-popup-class', // (オプション) カスタムCSSクラスを指定可能
+                        },
+                    });
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

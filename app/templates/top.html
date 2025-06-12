@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNote-TOP</title>
+    <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
+    <!-- font set -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- bootstrap5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link  href="../static/css/top.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKTFPFB7YJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-TKTFPFB7YJ');
+    </script> -->
+    <!-- reCAPTCHAv3 -->
+    <!-- <script src="https://www.google.com/recaptcha/api.js?render=6LfuYBIpAAAAAHxpoOp_KBmJ5ZDQ1_1H3CH0Yxjh"></script> -->
+    <!-- <script>
+        grecaptcha.ready(function() {
+            grecaptcha.execute('6LfuYBIpAAAAAHxpoOp_KBmJ5ZDQ1_1H3CH0Yxjh', { action: 'submit' }).then(function(token) {
+                fetch('https://services.sunflower-t-c-jp.com/user_check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: token
+                    })
+                }).then(response => response.json())
+                .then(data => console.log(data));
+            });
+        });
+    </script> -->
+</head>
+<body>
+<div id="app" class="margin-right">
+    <header class="header-container border-bottom">
+        <nav class="navbar navbar-light">
+            <div class="d-flex" style="width: 90vw;">
+                <a href="/" class="navbar-brand">
+                    <img src="static/img/favicon.png" alt="STC Logo" style="width: 40px; height: 40px;"> <!-- facvicon -->
+                </a>
+                <h2 id="title" class="m-0 flex-grow-1 text-center">QuickNote</h2> <!-- タイトルを中央に -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                </h2> <!-- タイトルを中央に -->
+            </div>
+            <div class="offcanvas offcanvas-end custom-offcanva" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">メニュー</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=email-verification">
+                            <img src="./static/svg/mark_email_read_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" alt="メール確認アイコン">
+                            メール確認</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=report">
+                            <img src="./static/svg/lab_profile_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" alt="レポートアイコン">
+                            レポート</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=settings">
+                            <img src="./static/svg/settings_applications_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" alt="設定アイコン">
+                            設定</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">
+                            <img src="./static/svg/logout_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" alt="ログアウトアイコン">
+                            ログアウト</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="inline-values">
+            <div class="row">
+                <p>
+                    {{ co_name if co_name else co_id }}
+                </p>
+                <p class="right">
+                    {{ lastname }} {{ firstname }} / {{ user_ip }}
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="nav" class="container">
+        <!-- タブナビゲーション -->
+        <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <a id="email-verification-tab" class="nav-link menu-box" href="?tab=email-verification" @click.prevent="changeTab('email-verification')" :class="{ active: activeTab === 'email-verification' }">メール業務</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a id="report-tab" class="nav-link menu-box" href="?tab=report" @click.prevent="changeTab('report')" :class="{ active: activeTab === 'report' }">レポート</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a id="settings-tab" class="nav-link menu-box" href="?tab=settings" @click.prevent="changeTab('settings')" :class="{ active: activeTab === 'settings' }">設定</a>
+            </li>
+        </ul>
+    </div>
+    <div id="menu" class="container">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'email-verification' }" id="email-verification" role="tabpanel">
+                <div class="row">
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" @click="openModal">
+                            <div class="button-content">
+                                <img src="./static/svg/touch_app_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="QuickNote実行アイコン">
+                                <div class="menu-box">QuickNote</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/instructions';">
+                            <div class="button-content">
+                                <img src="./static/svg/integration_instructions_60dp_F19E39_FILL0_wght400_GRAD0_opsz48.svg" alt="指示書アイコン">
+                                <div class="menu-box">指示書</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/history';">
+                            <div class="button-content">
+                                <img src="./static/svg/stacked_email_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="稼働履歴アイコン">
+                                <div class="menu-box">メール履歴</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/onenote_info';">
+                            <div class="button-content">
+                                <img src="./static/svg/format_list_numbered_rtl_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="OneNoteアイコン">
+                                <div class="menu-box">OneNote</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'report' }" id="report" role="tabpanel">
+                <div class="row">
+                    <div id="button" class="col-12 col-sm-10 col-md-6 col-lg-6 col-xl-6">
+                        <button class="btn dashboard-button" onclick="location.href='/category_report';">
+                            <div class="button-content">
+                                <img src="./static/svg/category_search_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="照合端末登録アイコン">
+                                <div class="menu-box">分類レポート</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-6 col-lg-6 col-xl-6">
+                        <button class="btn dashboard-button" onclick="location.href='/history';">
+                            <div class="button-content">
+                                <img src="./static/svg/manage_history_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="稼働履歴アイコン">
+                                <div class="menu-box">稼働レポート</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" :class="{ 'show active': activeTab === 'settings' }" id="settings" role="tabpanel">
+                <div class="row">
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/settings_auto_execution';">
+                            <div class="button-content">
+                                <img src="./static/svg/schedule_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="定期実行アイコン">
+                                <div class="menu-box">定期実行</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/settings_category';">
+                            <div class="button-content">
+                                <img src="./static/svg/category_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="分類項目アイコン">
+                                <div class="menu-box">分類項目</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/settings_api';">
+                            <div class="button-content">
+                                <img src="./static/svg/api_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="API設定アイコン">
+                                <div class="menu-box">API</div>
+                            </div>
+                        </button>
+                    </div>
+                    <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/settings_openai';">
+                            <div class="button-content">
+                                <img src="./static/svg/settings_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="Openai設定アイコン">
+                                <div class="menu-box">Openai</div>
+                            </div>
+                        </button>
+                    </div>
+                    <!-- <div id="button" class="col-12 col-sm-10 col-md-3 col-lg-3 col-xl-3">
+                        <button class="btn dashboard-button" onclick="location.href='/schedule_api';">
+                            <div class="button-content">
+                                <img src="./static/svg/settings_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="Openai設定アイコン">
+                                <div class="menu-box">スケジュール設定</div>
+                            </div>
+                        </button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- モーダル(QuickNote) -->
+    <div v-if="showModal" class="modal fade show" tabindex="-1" aria-labelledby="userFormModalLabel" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userFormModalLabel">QuickNote - 実行確認</h5>
+                    <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="submitForm">
+                        <div class="mb-3">
+                            <label for="lastTime" class="form-label">前回メール処理日時</label>
+                            <input v-model="formData.lastTime" type="text" class="form-control" id="lastTime" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dateTime" class="form-label">メール処理開始日時</label>
+                            <input v-model="formData.dateTime" type="datetime-local" class="form-control" id="dateTime" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">メールアドレス</label>
+                            <input v-model="formData.email" type="email" class="form-control" id="email" required>
+                        </div>
+                    </form>
+                    <div id="responseDisplay">{{ responseMessage }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn bg-info-subtle" @click="submitForm">
+                        実行
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="showModal" class="modal-backdrop fade show"></div>
+    <!-- ローディングインジケーター -->
+    <div v-if="loading" class="loading-overlay">
+        <div class="spinner-border text-secondary" role="status"></div>
+        <span>  Loading...</span>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script>
+    const { createApp } = Vue;
+    createApp({
+        data() {
+            return {
+                activeTab: 'email-verification', // デフォルトタブ
+                showModal: false,
+                formData: {
+                    lastTime: '',
+                    dateTime: '',
+                    email: 'hiroki.inaba@sunflower-t-c.com'
+                },
+                responseMessage: '',
+                loading: false
+            };
+        },
+        async mounted() {
+            // URLのクエリパラメータをチェックしてactiveTabを設定
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam) {
+                this.activeTab = tabParam;
+            }
+        },
+        methods: {
+            changeTab(tabName) {
+                this.activeTab = tabName;
+                history.replaceState(null, '', `?tab=${tabName}`); // URLを更新してクエリパラメータを反映
+            },
+            async openModal() {
+                // モーダルを開く際にデータを再取得
+                try {
+                    const response = await fetch('/max_received_date');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.max_received_date) {
+                            // ISO形式の日時文字列を変換
+                            const isoString = data.max_received_date;
+                            const formattedDate = new Date(isoString).toISOString().replace('T', ' ').replace('Z', '').split('.')[0];
+                            this.formData.lastTime = formattedDate;
+                            this.formData.dateTime = formattedDate;
+                        }
+                    } else {
+                        console.error('Failed to fetch max received date:', response.statusText);
+                    }
+                } catch (error) {
+                    console.error('Error fetching max received date:', error);
+                }
+                // モーダル表示フラグをtrueに設定
+                this.showModal = true;
+            },
+            closeModal() {
+                this.showModal = false;
+                this.formData = { lastTime: '', dateTime: '', email: 'hiroki.inaba@sunflower-t-c.com' }; // フォームのリセット
+            },
+            async submitForm() {
+                try {
+                    this.loading = true;  // インジケーターを表示
+                    const response = await fetch('/mail_processing', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.formData)
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    this.responseMessage = data.message || 'Success';
+
+                    alert('処理が完了しました。');
+                } catch (error) {
+                    this.responseMessage = 'Error: ' + (error.message || 'Unknown error');
+                } finally {
+                    this.closeModal();  // モーダルを閉じる
+                    this.loading = false;  // インジケーターを非表示
+                }
+            },
+        }
+    }).mount('#app');
+</script>
+<footer class="main-footer">
+    <div class="float-center d-none d-sm-block">
+        <b>Version</b> 1.0.0
+    </div>
+    <strong>Copyright &copy; 2024 <a style="color: #fff;">Sunflower T&C,Inc</a>.</strong> All rights reserved.
+</footer>
+</body>
+</html>

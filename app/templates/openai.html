@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNote-Openai</title>
+    <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
+    <!-- font set -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="../static/css/history.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header-container border-bottom">
+        <nav class="navbar navbar-light">
+            <div class="d-flex" style="width: 90vw;">
+                <a href="/" class="navbar-brand">
+                    <img src="static/img/favicon.png" alt="STC Logo" style="width: 40px; height: 40px;">
+                </a>
+                <h2 id="title" class="m-0 flex-grow-1 text-center">QuickNote</h2>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="offcanvas offcanvas-end" id="offcanvasNavbar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">メニュー</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item"><a class="nav-link" href="/">TOP</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=email-verification">
+                            <img src="./static/svg/mark_email_read_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="メール確認アイコン">
+                            メール確認</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=report">
+                            <img src="./static/svg/lab_profile_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="レポートアイコン">
+                            レポート</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=settings">
+                            <img src="./static/svg/settings_applications_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="設定アイコン">
+                            設定</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">
+                            <img src="./static/svg/logout_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="ログアウトアイコン">
+                            ログアウト</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- パンくずリスト -->
+    <nav class="breadcrumb-container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/top">TOP</a></li>
+            <li class="breadcrumb-item"><a href="/top?tab=settings">設定</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Openai</li>
+        </ol>
+    </nav>
+    <div id="app" class="container mx-auto">
+        <div id="s-title" class="d-flex justify-content-between align-items-center mb-2">
+            <span>Openai設定</span>
+        </div>
+        <div class="card">
+            <div class="card-header text-white">
+                Chat GPT設定
+            </div>
+            <div class="card-body">
+                <form @submit.prevent="submitForm">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <label for="usageModel" class="form-label">使用モデル</label>
+                            <select v-model="formData.usageModel" type="text" class="form-control" id="usageModel" placeholder="使用するモデルを選択">
+                                <option disabled value="">使用するモデルを選択</option>
+                                <option value="gpt-4o">gpt-4o</option>
+                                <option value="gpt-4">gpt-4</option>
+                                <option value="gpt-4-turbo">gpt-4-turbo</option>
+                                <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header text-white">
+                Content設定
+            </div>
+            <div class="card-body">
+                <form @submit.prevent="submitForm">
+                    <div class="row">
+                        <div class="col-md-6 col-lg-12 mb-3">
+                            <label for="systemContent" class="form-label">System Content</label>
+                            <textarea v-model="contentFormData.systemContent" type="text" class="form-control" id="systemContent" rows="3" style="resize: vertical; overflow-y: auto;"></textarea>
+                            <div class="d-flex justify-content-between">
+                                <span></span>
+                                <small class="text-muted">{% raw %}{{ systemContentLength }}{% endraw %} 文字</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-12 mb-3">
+                            <label for="userContent" class="form-label">User Content</label>
+                            <textarea v-model="contentFormData.userContent" type="text" class="form-control" id="userContent" rows="3" style="resize: vertical; overflow-y: auto;"></textarea>
+                            <div class="d-flex justify-content-between">
+                                <span></span>
+                                <small class="text-muted">{% raw %}{{ userContentLength }}{% endraw %} 文字</small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="d-flex justify-content-end align-items-center mb-1">
+            <button class="btn btn-outline-warning" @click="submitForm">
+                <img src="./static/svg/save_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="Save" width="20"> 
+                保存</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    formData: {
+                        usageModel: '{{ model }}' 
+                    },
+                    contentFormData: {
+                        systemContent: '{{ sys_content | tojson }}',
+                        userContent: '{{ user_content | tojson }}'
+                    }
+                };
+            },
+            computed: {
+                systemContentLength() {
+                    return this.contentFormData.systemContent ? this.contentFormData.systemContent.length : 0;
+                },
+                userContentLength() {
+                    return this.contentFormData.userContent ? this.contentFormData.userContent.length : 0;
+                }
+            },
+            methods: {
+                async submitForm() {
+                    try {
+                        const response = await fetch('/settings_openai', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                model: this.formData.usageModel,
+                                sys_content: this.contentFormData.systemContent,
+                                user_content: this.contentFormData.userContent
+                            })
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            alert(result.message || '設定が更新されました');
+                        } else {
+                            const errorText = await response.text();
+                            throw new Error(`Error: ${errorText}`);
+                        }
+                    } catch (error) {
+                        console.error('フォーム送信エラー:', error);
+                        alert('フォーム送信に失敗しました。');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+    <footer class="main-footer">
+        <div class="float-center d-none d-sm-block mt-1">
+            <b>Version</b> 1.0.0
+        </div>
+        <strong>Copyright &copy; 2024 <a style="color: #fff;">Sunflower T&C,Inc</a>.</strong> All rights reserved.
+    </footer>
+</body>
+</html>

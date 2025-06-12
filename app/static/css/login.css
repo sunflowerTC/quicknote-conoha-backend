@@ -1,0 +1,89 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(255, 250, 244);
+    box-sizing: border-box;
+}
+body {
+    display: flex;
+    justify-content: center;
+    max-width: 600px; /* 最大幅を600pxに変更 */
+}
+.logo-text-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.logo-img {
+    margin-right: 20px; /* ロゴとテキストの間隔を調整 */
+}
+
+.logo-text {
+    font-size: 54px; /* テキストの大きさを調整 */
+    font-weight: bold; /* 太字にする */
+}
+.form-signin {
+    width: 100%; 
+    max-width: 420px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-floating {
+    margin-bottom: 10px;
+}
+.label-with-icon {
+    display: flex;
+    align-items: center;
+}
+.form-control {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* シャドーの設定 */
+}
+.main-footer {
+    position: fixed;  /* 位置を固定 */
+    left: 0;          /* 左端から */
+    bottom: 0;        /* 下端から */
+    width: 100%;      /* 幅を100%に設定 */
+    background-color: #000; /* 背景色を黒に設定 */
+    color: #fff;      /* テキスト色を白に設定 */
+    text-align: center; /* テキストを中央揃え */
+    margin-top: 10px;
+    padding: 10px 0;  /* 上下にパディングを設定 */
+    z-index: 0;    /* 他の要素よりも前面に表示 */
+    white-space: nowrap; /* テキストの折り返しを防止 */
+    overflow: hidden; /* コンテンツが溢れたら隠す */
+    text-overflow: ellipsis; /* コンテンツが溢れたら省略記号を表示 */
+}
+.float-center {
+    text-align: center; /* 右揃えに設定 */
+}
+
+@media (max-width: 767px) {
+    .logo-img {
+        margin-right: 16px; /* ロゴとテキストの間隔を調整 */
+    }
+    .logo-text {
+        font-size: 36px; /* テキストの大きさを調整 */
+        font-weight: bold; /* 太字にする */
+    }
+    
+    .form-signin {
+        width: 90%; /* モバイル用の幅を90%に設定 */
+        max-width: 100%; /* 最大幅を100%に設定 */
+    }
+    #submitButton, #userLoginButton {
+        font-size: 16px; /* ログインボタンのフォントサイズ */
+    }
+    .main-footer {
+        font-size: 14px;
+    }
+}
+.grecaptcha-badge {
+        visibility: hidden;
+}

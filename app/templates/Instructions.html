@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>指示書</title>
+    <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/instructions.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.5.10/dist/vue.global.prod.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <header class="header-container border-bottom">
+        <nav class="navbar navbar-light">
+            <div class="d-flex" style="width: 90vw;">
+                <a href="/" class="navbar-brand">
+                    <img src="static/img/favicon.png" alt="STC Logo" style="width: 40px; height: 40px;">
+                </a>
+                <h2 id="title" class="m-0 flex-grow-1 text-center">QuickNote</h2>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="offcanvas offcanvas-end" id="offcanvasNavbar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">メニュー</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item"><a class="nav-link" href="/">TOP</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=email-verification">
+                            <img src="./static/svg/mark_email_read_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="メール確認アイコン">
+                            メール業務</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=report">
+                            <img src="./static/svg/lab_profile_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="レポートアイコン">
+                            レポート</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=settings">
+                            <img src="./static/svg/settings_applications_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="設定アイコン">
+                            設定</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">
+                            <img src="./static/svg/logout_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="ログアウトアイコン">
+                            ログアウト</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- パンくずリスト -->
+    <nav class="breadcrumb-container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/top">TOP</a></li>
+            <li class="breadcrumb-item"><a href="/top?tab=email-verification">メール業務</a></li>
+            <li class="breadcrumb-item active" aria-current="page">指示書</li>
+        </ol>
+    </nav>
+    <div id="app" class="container mx-auto">
+        <div id="s-title" class="d-flex justify-content-between align-items-center mb-2">
+            <span>指示書登録</span>
+        </div>
+
+        <!-- Instruction Table -->
+        <div class="table-container">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th class="received-date-column">依頼日</th>
+                        <th class="received-date-column">メール受信日</th>
+                        <th class="instructions-date-column">指示内容</th>
+                        <th class="detail-date-column">詳細指示</th>
+                        <th class="files-date-column">添付ファイル</th>
+                        <th class="class-date-column">区分</th>
+                        <th class="storagefiles-date-column">保管ファイル</th>
+                        <th class="received-date-column">結了日</th>
+                        </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in instructionsList" :key="index">
+                        <!-- 依頼日 -->
+                        <td><input type="date" v-model="item.requestDate" class="form-control" required></td>
+                        <!-- メール受信日 -->
+                        <td><input type="date" v-model="item.emailReceivedDate" class="form-control" required></td>
+                        <!-- 指示内容 -->
+                        <td>
+                            <select v-model="item.instructions" class="form-select" @change="handleInstructionChange(item)">
+                                <option v-for="opt in instructionOptions" :key="opt" :value="opt">{% raw %}{{ opt }}{% endraw %}</option>
+                            </select>
+                        </td>
+                        <!-- 詳細指示 -->
+                        <td><textarea type="text" v-model="item.details" class="form-control" rows="5"></textarea></td>
+                        <!-- 添付ファイル名 -->
+                        <td><input type="text" v-model="item.attachedFiles" class="form-control"></td>
+                        <!-- 区分 -->
+                        <td>
+                            <select v-model="item.category" class="form-select" :disabled="item.instructions === 'File to'">
+                                <option value="一括">一括</option>
+                                <option value="個別">個別</option>
+                            </select>
+                        </td>
+    
+                        <!-- 保管ファイル名 -->
+                        <td>
+                            <select 
+                                v-model="item.storageFiles" 
+                                class="form-select" :disabled="item.instructions !== 'File to'"
+                                multiple 
+                                size="4">
+                                <option v-for="opt in storageOptions" :key="opt" :value="opt">{% raw %}{{ opt }}{% endraw %}</option>
+                            </select>
+                            <div class="mt-2">
+                                <strong>選択:</strong>
+                                <span v-if="item.storageFiles.length">
+                                    {% raw %}{{ item.storageFiles.join(', ') }}{% endraw %}
+                                </span>
+                                <span v-else>未選択</span>
+                            </div>
+                        </td>
+                        <!-- 結了日 -->
+                        <td><input type="date" v-model="item.completeDate" class="form-control"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-success mt-3" @click="saveInstructions">+ 登録</button>
+        </div>
+
+        <div id="s-title" class="d-flex justify-content-between align-items-center mt-3 mb-2">
+            <span v-if="savedInstructions.length > 0">指示書一覧</span>
+        </div>
+        <div class="table-container">
+            <table v-if="savedInstructions.length > 0" class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th @click="sortBy('requestDate')">依頼日</th>
+                        <th @click="sortBy('emailReceivedDate')">メール受信日</th>
+                        <th>指示内容</th>
+                        <th class="detail-date-column">詳細指示</th>
+                        <th>添付ファイル名</th>
+                        <th>区分</th>
+                        <th>保管ファイル名</th>
+                        <th @click="sortBy('completeDate')">結了日</th>
+                        <th @click="sortBy('isComplete')">結了確認</th>
+                        <th>削除</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(row, index) in savedInstructions" :key="index">
+                        {% raw %}
+                        <td>{{ row.requestDate }}</td>
+                        <td>{{ row.emailReceivedDate }}</td>
+                        <td>{{ row.instructions }}</td>
+                        <td>{{ row.details }}</td>
+                        <td>{{ row.attachedFiles }}</td>
+                        <td>{{ row.category }}</td>
+                        <td>{{ row.storageFiles.join(', ') }}</td>
+                        <td>{{ row.completeDate }}</td>
+                        {% endraw %}
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" v-model="row.isComplete" id="toggle-{{ idx }}">
+                                <label class="form-check-label" :for="'toggle-' + idx">
+                                    {% raw %}
+                                    <span>{{ row.isComplete ? '結了' : '未了' }}</span>
+                                    {% endraw %}
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" @click="deleteInstruction(row)">削除</button>
+                            <!-- <button class="btn btn-danger btn-sm" @click="savedInstructions.splice(index, 1)">削除</button> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-else>
+                <p>現在、登録された指示書はありません。</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    instructionOptions: ['Daily PDF', 'Copy ×', 'e-mail to', 'Title', '〒 to', 'File to'],
+                    storageOptions: ['CC', 'CM', 'CLC', 'Rotary', 'Polio Plus', '平和FS', 'OKJ', 'RSJ'], // オプション値
+                    savedInstructions: [], // サーバーから取得するデータ
+                    newInstruction: {
+                        requestDate: this.getTodayDate(),
+                        emailReceivedDate: '',
+                        instructions: '',
+                        details: '',
+                        attachedFiles: '',
+                        category: '',
+                        storageFiles: [],
+                        completeDate: '',
+                        isComplete: false,
+                    },
+                    // 登録画面の初期値として1行のデータ
+                    instructionsList: [
+                        {
+                            requestDate: this.getTodayDate(),
+                            emailReceivedDate: '',
+                            instructions: '',
+                            details: '',
+                            attachedFiles: '',
+                            category: '',
+                            storageFiles: [], // 必ず配列で初期化
+                            isComplete: false,
+                            completeDate: ''
+                        }
+                    ],
+                    sortKey: '',
+                    sortAscending: true,
+                };
+            },
+            mounted() {
+                this.fetchInstructions();
+            },
+            methods: {
+                getTodayDate() {
+                    const now = new Date();
+                    now.setHours(now.getHours() + 9); // 日本時間（UTC+9）に調整
+                    return now.toISOString().split('T')[0]; // YYYY-MM-DD形式で取得
+                },
+                handleInstructionChange(item) {
+                    console.log('Changed instruction:', item.instructions);
+                    if (item.instructions === 'File to') {
+                        item.category = ''; // Reset category
+                    } else {
+                        item.storageFiles = []; // Reset storageFiles
+                    }
+                },
+                async fetchInstructions() {
+                    try {
+                        const response = await axios.get('/api/instructions');
+                        this.savedInstructions = response.data.map((instruction) => ({
+                            ...instruction,
+                            id: instruction.id || Date.now(), // IDがない場合は一意のIDを付与
+                        }));
+                    } catch (error) {
+                        console.error("Failed to fetch instructions:", error);
+                    }
+                },
+                async addInstruction() {
+                    if (!this.newInstruction.requestDate || !this.newInstruction.instructions) {
+                        alert("依頼日と指示内容は必須項目です。");
+                        return;
+                    }
+        
+                    try {
+                        const newId = Date.now(); // 一意のIDを生成
+                        const instructionToSave = { ...this.newInstruction, id: newId };
+        
+                        const response = await axios.post('/api/instructions', instructionToSave);
+                        const savedData = response.data;
+        
+                        this.savedInstructions.push(savedData);
+        
+                        // 入力フォームをリセット
+                        this.newInstruction = {
+                            requestDate: this.getTodayDate(),
+                            emailReceivedDate: '',
+                            instructions: '',
+                            details: '',
+                            attachedFiles: '',
+                            category: '',
+                            storageFiles: [],
+                            completeDate: '',
+                            isComplete: false,
+                        };
+                    } catch (error) {
+                        console.error("Failed to save instruction:", error);
+                    }
+                },
+                async deleteInstruction(instruction) {
+                    if (!instruction || instruction.id === undefined) {
+                        alert('削除対象のデータが無効です。');
+                        return;
+                    }
+        
+                    if (!instruction.isComplete || !instruction.completeDate) {
+                        const confirmDelete = confirm('未了ですが、削除してもよろしいですか？');
+                        if (!confirmDelete) return;
+                    }
+        
+                    try {
+                        await axios.delete(`/api/instructions?id=${instruction.id}`);
+                        this.savedInstructions = this.savedInstructions.filter(
+                            (item) => item.id !== instruction.id
+                        );
+                        this.savedInstructions = this.savedInstructions.filter(item => item.id !== instruction.id);
+
+                    } catch (error) {
+                        console.error("Failed to delete instruction:", error);
+                    }
+                },
+                saveInstructions() {
+                    const validData = this.instructionsList.filter(item => item);
+                    this.savedInstructions.push(...validData);
+                    // リセット
+                    this.instructionsList = [
+                        {
+                            id: '',
+                            requestDate: '',
+                            emailReceivedDate: '',
+                            instructions: '',
+                            details: '',
+                            attachedFiles: '',
+                            category: '',
+                            storageFiles: [],
+                            isComplete: false,
+                            completeDate: ''
+                        }
+                    ];
+                },
+                sortBy(key) {
+                    this.savedInstructions.sort((a, b) => {
+                        return this.sortAscending ? (a[key] > b[key] ? 1 : -1) : (a[key] < b[key] ? 1 : -1);
+                    });
+                    this.sortAscending = !this.sortAscending;
+                },
+                validateInstruction(instruction) {
+                    if (!instruction.requestDate || !instruction.emailReceivedDate || !instruction.instructions) {
+                        alert("必須項目を入力してください！");
+                        return false;
+                    }
+                    return true;
+                }
+            },
+        }).mount('#app');
+        </script>
+
+    <footer class="main-footer">
+        <div class="float-center d-none d-sm-block">
+            <b>Version</b> 1.0.0
+        </div>
+        <strong>Copyright &copy; 2024 <a style="color: #fff;">Sunflower T&C,Inc</a>.</strong> All rights reserved.
+    </footer>
+</body>
+</html>

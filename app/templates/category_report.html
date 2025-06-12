@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNote-Category Report</title>
+    <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
+    <!-- font set -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="../static/css/history.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header-container border-bottom">
+        <nav class="navbar navbar-light">
+            <div class="d-flex" style="width: 90vw;">
+                <a href="/" class="navbar-brand">
+                    <img src="static/img/favicon.png" alt="STC Logo" style="width: 40px; height: 40px;">
+                </a>
+                <h2 id="title" class="m-0 flex-grow-1 text-center">QuickNote</h2>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="offcanvas offcanvas-end" id="offcanvasNavbar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">メニュー</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item"><a class="nav-link" href="/">TOP</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=email-verification">
+                            <img src="./static/svg/mark_email_read_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="メール確認アイコン">
+                            メール確認</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=report">
+                            <img src="./static/svg/lab_profile_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="レポートアイコン">
+                            レポート</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=settings">
+                            <img src="./static/svg/settings_applications_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="設定アイコン">
+                            設定</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">
+                            <img src="./static/svg/logout_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="ログアウトアイコン">
+                            ログアウト</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- パンくずリスト -->
+    <nav class="breadcrumb-container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/top">TOP</a></li>
+            <li class="breadcrumb-item"><a href="/top?tab=report">レポート</a></li>
+            <li class="breadcrumb-item active" aria-current="page">分類レポート</li>
+        </ol>
+    </nav>
+    <div id="app" class="container mx-auto">
+        <div id="s-title" class="d-flex justify-content-between align-items-center mb-2">
+            <span>分類レポート</span>
+            <a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" class="btn btn-outline-secondary">
+                <img src="./static/svg/account_balance_wallet_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="OpenAI Icon" width="20" height="20" class="me-2">
+                OpenAI Credit</a>
+        </div>
+        <div class="datetime d-flex justify-content-end mb-2">最終メール受信   {{ received_date }}</div>
+
+        <div class="table-container">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th class="category-column">分類</th>
+                        <th class="notebook-column">OneNote Book</th>
+                        <th class="from-email-column">登録メール</th>
+                        <th class="count-column">分類件数</th>
+                        <th class="onenote-column">OneNote</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, key) in cotagory" :key="key">
+                        <td>{% raw %}{{ key }}{% endraw %}</td>
+                        <td>{% raw %}{{ item['ブック名'] }}{% endraw %}</td>
+                        <td>
+                            <ul>
+                            <li v-for="email in item['登録メールアドレス']" :key="email">{% raw %}{{ email }}{% endraw %}</li>
+                            </ul>
+                        </td>
+                        <td>{% raw %}{{ item['分類件数'] }}{% endraw %}</td>
+                        <td>
+                            <a v-if="item['リンク'] && item['リンク'] !== 'N/A'" :href="item['リンク']" target="_blank">
+                                <img src="./static/svg/onenote.svg" alt="View Email" width="30">
+                            </a>
+                            <span v-else>--</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+    <script>
+        const { createApp, ref } = Vue;
+    
+        createApp({
+            setup() {
+                // JSON データを渡す
+                const cotagory = ref(JSON.parse('{{ count_cotagory | tojson | safe }}'));
+                return {
+                    cotagory
+                };
+            }
+        }).mount('#app');
+    </script>
+    <footer class="main-footer">
+        <div class="float-center d-none d-sm-block">
+            <b>Version</b> 1.0.0
+        </div>
+        <strong>Copyright &copy; 2024 <a style="color: #fff;">Sunflower T&C,Inc</a>.</strong> All rights reserved.
+    </footer>
+</body>
+</html>

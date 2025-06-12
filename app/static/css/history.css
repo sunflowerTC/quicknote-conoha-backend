@@ -1,0 +1,271 @@
+html, body {
+    font-family: 'Roboto', sans-serif;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 35px;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.navbar-brand {
+    margin-right: auto; /* ロゴとタイトルの間にスペースを追加 */
+}
+.offcanvas {
+    width: 300px !important;
+    color: #ffffff;
+    background: #f88b0e;
+    border-top-left-radius: 15px; /* 左下の角の丸み */
+    border-bottom-left-radius: 15px; /* 左下の角の丸み */
+}
+.offcanvas-body {
+    border-bottom-left-radius: 15px; /* 左下の角の丸み */
+}
+.nav-link {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+}
+.navbar-toggler {
+    text-align: right;
+}
+.d-flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* タイトルとボタンの間にスペースを最大化 */
+}
+.breadcrumb-container {
+    width: 100%;
+    text-align: left;
+    margin: 0 auto; /* 必要に応じて調整 */
+}
+.breadcrumb {
+    font-size: 1rem;
+    text-align: left; /* 明示的に左寄せ */
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+.breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    padding: 0 0.5rem;
+    color: #6c757d;
+}
+.breadcrumb-item a {
+    color: #faac38;
+    text-decoration: none;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+.breadcrumb-item a:hover {
+    transform: scale(1.1);
+}
+.breadcrumb-item.active {
+    color: #474747;
+}
+#title {
+    text-align: center;
+    font-weight: bold;
+    max-width: 90vw;
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    font-weight: bold;
+    margin: 20px 0;
+}
+#s-title {
+    font-size: 24px;
+}
+.container {
+    padding-right: 0;
+    padding-left: 0;
+    margin: 0 auto;
+    /* overflow-x: auto; */
+}
+.table-container {
+    overflow-x: auto; /* 横スクロールを許可 */
+    margin-top: 16px;
+    border-radius: 10px;
+}
+.table {
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* テーブルにシャドーを追加 */
+}
+.table th, .table td {
+    font-size: 14px;
+    vertical-align: middle;
+    text-align: center;
+}
+.table th {
+    color: #ffffff;
+    background: #f88b0e;
+}
+.subject-column { 
+    width: 12%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.from-name-column { 
+    width: 16%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.from-email-column { 
+    width: 16%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.received-date-column { 
+    width: 13%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.category-column { 
+    width: 6%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.priority-column { 
+    width: 5%; 
+}
+.summary-column { 
+    width: 27%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.link-column { 
+    width: 5%; 
+}
+/* onenote.html設定 */
+.table-container ul {
+    list-style-type: none; /* マーカーを非表示にする */
+    margin: 0; /* 余白をリセット */
+    padding: 0; /* パディングをリセット */
+}
+.table-container ul li {
+    margin-left: 0; /* 必要に応じてインデントを調整 */
+}
+.notebook-column { 
+    width: 30%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.section-column { 
+    width: 30%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.last-update-column { 
+    width: 20%; 
+    text-align: left;
+    word-wrap: break-word; /* 長い単語を折り返す */
+    white-space: normal; /* 折り返しを有効にする */
+}
+.onenote-link-column { 
+    width: 20%;
+}
+.icon-spacing {
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.icon-spacing + a {
+    margin-left: 10px;
+    margin-left: 10px;
+}
+
+/* category.html設定 */
+.from-category-email-column {
+    width: 30%;
+}
+.from-notebook-column { 
+    width: 30%;
+}
+.from-section-column { 
+    width: 30%; 
+}
+.from-function-column { 
+    width: 10%; 
+}
+
+/* settings.html設定 */
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+.card-header {
+    background: #f88b0e;
+}
+.form-label {
+    font-weight: bold;
+}
+
+.main-footer {
+    position: fixed;  /* 位置を固定 */
+    left: 0;          /* 左端から */
+    bottom: 0;        /* 下端から */
+    width: 100%;      /* 幅を100%に設定 */
+    background-color: #000; /* 背景色を黒に設定 */
+    color: #fff;      /* テキスト色を白に設定 */
+    text-align: center; /* テキストを中央揃え */
+    margin-top: 10px;
+    padding: 10px 0;  /* 上下にパディングを設定 */
+    z-index: 100;    /* 他の要素よりも前面に表示 */
+    white-space: nowrap; /* テキストの折り返しを防止 */
+    overflow: hidden; /* コンテンツが溢れたら隠す */
+    text-overflow: ellipsis; /* コンテンツが溢れたら省略記号を表示 */
+}
+.float-center {
+    text-align: center; /* 右揃えに設定 */
+}
+@media (max-width: 767px) {
+    html, body {
+        width: 98%;
+        height: auto;
+        margin-bottom: 10px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .container {
+        margin-bottom: 35px;
+    }
+    .breadcrumb {
+        font-size: 14px;
+    }
+    #s-title {
+        font-size: 18px;
+    }
+    .datetime {
+        font-size: 14px;
+    }
+    .table th, .table td {
+        font-size: 13px;
+    }
+    .main-footer {
+        font-size: 14px;
+    }
+}

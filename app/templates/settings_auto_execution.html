@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickNote-定期実行</title>
+    <link rel="icon" type="image/x-icon" href="static/img/favicon.png">
+    <!-- font set -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link href="../static/css/history.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header-container border-bottom">
+        <nav class="navbar navbar-light">
+            <div class="d-flex" style="width: 90vw;">
+                <a href="/" class="navbar-brand">
+                    <img src="static/img/favicon.png" alt="STC Logo" style="width: 40px; height: 40px;">
+                </a>
+                <h2 id="title" class="m-0 flex-grow-1 text-center">QuickNote</h2>
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+            <div class="offcanvas offcanvas-end" id="offcanvasNavbar">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title">メニュー</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item"><a class="nav-link" href="/">TOP</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=email-verification">
+                            <img src="./static/svg/mark_email_read_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="メール確認アイコン">
+                            メール確認</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=report">
+                            <img src="./static/svg/lab_profile_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="レポートアイコン">
+                            レポート</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/top?tab=settings">
+                            <img src="./static/svg/settings_applications_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="設定アイコン">
+                            設定</a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="/logout">
+                            <img src="./static/svg/logout_36dp_FFFFFF_FILL0_wght400_GRAD0_opsz40.svg" style="width: 36px; height: 36px;" alt="ログアウトアイコン">
+                            ログアウト</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- パンくずリスト -->
+    <nav class="breadcrumb-container" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/top">TOP</a></li>
+            <li class="breadcrumb-item"><a href="/top?tab=settings">設定</a></li>
+            <li class="breadcrumb-item active" aria-current="page">定期実行</li>
+        </ol>
+    </nav>
+    <div id="app" class="container mx-auto">
+        <div id="s-title" class="d-flex justify-content-between align-items-center mb-2">
+            <span>定期実行設定</span>
+        </div>
+        <div class="card">
+            <div class="card-header text-white">
+                システム実行設定
+            </div>
+            <div class="card-body">
+                <form @submit.prevent="submitScheduleForm">
+                    <div class="mb-3">
+                        <label class="form-label">実行方法</label>
+                        <div class="d-flex flex-wrap">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="interval" name="scheduleType" value="interval" v-model="formData.scheduleType">
+                                <label for="interval"> 時間間隔指定</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="count" name="scheduleType" value="count" v-model="formData.scheduleType">
+                                <label for="count"> 回数指定</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="time" name="scheduleType" value="time" v-model="formData.scheduleType">
+                                <label for="time"> 時間指定</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" id="none" name="scheduleType" value="none" v-model="formData.scheduleType">
+                                <label for="none"> 定期実行なし</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 時間間隔指定の項目 -->
+                    <div v-if="formData.scheduleType === 'interval'" class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <div class="me-2" style="flex: 1;">
+                                <label for="startTime" class="form-label">開始時間</label>
+                                <input type="time" id="startTime" v-model="formData.startTime" class="form-control">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="intervalTime" class="form-label">間隔</label>
+                                <input type="time" id="intervalTime" v-model="formData.intervalTime" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 回数指定の項目 -->
+                    <div v-if="formData.scheduleType === 'count'" class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <div class="me-2" style="flex: 1;">
+                                <label for="startTimeCount" class="form-label">開始時間</label>
+                                <input type="time" id="startTimeCount" v-model="formData.startTimeCount" class="form-control">
+                            </div>
+                            <div style="flex: 1;">
+                                <label for="executionCount" class="form-label">回数 ※1-12回</label>
+                                <input type="number" id="executionCount" v-model.number="formData.executionCount" class="form-control" min="1" max="12">
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- 時間指定の項目 -->
+                    <div v-if="formData.scheduleType === 'time'" class="col-md-12 col-lg-12 mb-3">
+                        <label class="form-label">実行時間 ※最大6つまで設定可能</label>
+                        <div class="d-flex flex-wrap">
+                            <div v-for="(time, index) in formData.executionTimes" :key="index" class="mb-2 me-2" style="flex: 0 0 calc(50% - 0.5rem);">
+                                <input type="time" v-model="formData.executionTimes[index]" class="form-control">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary mt-2" @click="addExecutionTime" :disabled="formData.executionTimes.length >= 6">
+                            <img src="./static/svg/add_40dp_666666_FILL0_wght400_GRAD0_opsz40.svg" alt="Add" width="20" height="20"> 追加
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- 保存ボタン -->
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-outline-warning" @click="submitScheduleForm">
+                <img src="./static/svg/save_40dp_F19E39_FILL0_wght400_GRAD0_opsz40.svg" alt="Save" width="20"> 保存
+            </button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+    <script>
+        const { createApp } = Vue;
+        createApp({
+            data() {
+                return {
+                    formData: {
+                        scheduleType: '', // 初期状態では何も選択されていないので空文字列
+                        startTime: '',
+                        intervalTime: '',
+                        startTimeCount: '',
+                        executionCount: 1,
+                        executionTimes: ['']
+                    }
+                };
+            },
+            methods: {
+                addExecutionTime() {
+                    if (this.formData.executionTimes.length < 6) {
+                        this.formData.executionTimes.push('');
+                    }
+                },
+                async submitScheduleForm() {
+                    try {
+                        const response = await fetch('/schedule_api', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(this.formData)
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            alert(result.message || 'スケジュール設定が更新されました');
+                        } else {
+                            const errorText = await response.text();
+                            throw new Error(`Error: ${errorText}`);
+                        }
+                    } catch (error) {
+                        console.error('スケジュール設定フォーム送信エラー:', error);
+                        alert('スケジュール設定フォーム送信に失敗しました。');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+    <footer class="main-footer">
+        <div class="float-center d-none d-sm-block mt-1">
+            <b>Version</b> 1.0.0
+        </div>
+        <strong>Copyright &copy; 2024 <a style="color: #fff;">Sunflower T&C,Inc</a>.</strong> All rights reserved.
+    </footer>
+</body>
+</html>
