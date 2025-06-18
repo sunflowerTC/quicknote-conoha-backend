@@ -157,6 +157,8 @@ def generate_html(subject, sender, sender_email, to, cc, category, priority_ai, 
     category = category or []
     references = references or []
     attachments = attachments or []
+
+    logger.info(f"添付ファイル構造: {attachments}")
     
     if isinstance(category, list):
         category = ", ".join(category)  # カンマで結合
@@ -164,9 +166,10 @@ def generate_html(subject, sender, sender_email, to, cc, category, priority_ai, 
         references = ", ".join(references)  # カンマで結合
     if isinstance(attachments, list):
         attachment_list = "".join([
-            f"<li>{html.escape(attachment.get('name', 'ファイル名未設定'))}</li>"
+            f"<li><a href=\"{html.escape(attachment.get('original_url', '#'))}\">{html.escape(attachment.get('name', 'ファイル名未設定'))}</a></li>"
             for attachment in attachments
-            if isinstance(attachment, dict)
+
+            if isinstance(attachment, dict) and 'original_url' in attachment
         ])
     else:
         attachment_list = ""
@@ -196,7 +199,7 @@ def generate_html(subject, sender, sender_email, to, cc, category, priority_ai, 
     escaped_priority_ai = html.escape(priority_ai)
     escaped_received_date = html.escape(received_date)
     # escaped_web_link = html.escape(web_link)
-    # escaped_summary = html.escape(summary).replace('\n', '<br>')
+    escaped_summary = html.escape(summary).replace('\n', '<br>')
     escaped_body = html.escape(body).replace('\n', '<br>')
 
     # HTMLコンテンツの生成
@@ -223,7 +226,9 @@ def generate_html(subject, sender, sender_email, to, cc, category, priority_ai, 
                 </table>
                 <hr>
                 <div style="white-space: pre-wrap; font-size: 14px; line-height: 1.5;">
-                    <p>{escaped_body}</p>
+                    <p><strong>要約:</strong> {escaped_summary}</p>
+                    <p></p>
+                    <p><strong>本文:</strong> {escaped_body}</p>
                 </div>
             </div>
         </body>

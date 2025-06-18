@@ -24,7 +24,7 @@ result_queue = Queue()
 logger = logging.getLogger("mailsystem")
 
 """許可するファイル拡張子"""
-ALLOWED_EXTENSIONS = {'.pdf', '.docx', '.xls', '.xlsx', '.jpg', '.png', '.txt', '.zip', '.csv', '.pptx'}
+ALLOWED_EXTENSIONS = {'.pdf', '.docx', '.xls', '.xlsx', '.jpg', '.png', '.txt', '.zip', '.csv', '.pptx', '.mp4'}
 
 """最大ファイルサイズ (バイト単位、例: 10MB)"""
 MAX_FILE_SIZE = 20 * 1024 * 1024
@@ -214,12 +214,16 @@ def upload_to_drive(file_name, file_data, folder_id, app):
             file = drive_service.files().create(
                 body=file_metadata,
                 media_body=media,
-                fields='id',
+                fields='id, webViewLink',
                 supportsAllDrives=True
             ).execute()
 
             logger.info(f"ファイル '{unique_file_name}' をアップロードしました。ファイルID: {file.get('id')}")
-            return file.get('id')
+            logger.info(f"🔗 閲覧リンク: {file.get('webViewLink')}")
+            return {
+                "file_id": file.get("id"),
+                "view_link": file.get("webViewLink")
+            }
         except Exception as e:
             logger.error(f"ファイルアップロード中にエラー: {e}")
             return None
@@ -256,11 +260,18 @@ def upload_to_drive_and_get_id_by_day(file_name, file_data, day_folder_name, app
                 return None
 
             # ③ ファイルをアップロード
-            file_id = upload_to_drive(safe_file_name, file_data, day_folder_id, app)
+            result = upload_to_drive(safe_file_name, file_data, day_folder_id, app)
+            # file_id = upload_to_drive(safe_file_name, file_data, day_folder_id, app)
 
-            if file_id:
-                logger.info(f"✅ ファイル '{safe_file_name}' を QuickNote_Attachment/{day_folder_name} にアップロードしました")
-                return file_id
+            if result:
+                file_id = result["file_id"]
+                view_link = result["view_link"]
+                logger.info(f"✅ ファイル '{safe_file_name}' をアップロード。リンク: {view_link}")
+                return file_id, view_link  # 👈 OneNote 用にリンクを返す
+
+            # if file_id:
+            #     logger.info(f"✅ ファイル '{safe_file_name}' を QuickNote_Attachment/{day_folder_name} にアップロードしました")
+            #     return file_id
             else:
                 logger.error(f"❌ ファイル '{safe_file_name}' のアップロードに失敗しました")
                 return None

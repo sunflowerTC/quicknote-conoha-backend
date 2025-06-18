@@ -154,8 +154,7 @@ def ensure_subscription_valid():
 """メール履歴をDBから取得"""
 def get_history(limit=200):
     try:
-        # outlook_emails = db.session.query(Email).order_by(Email.received_date.desc()).all()
-        # ✅ 最新順に最大500件のみ取得
+        # ✅ 最新順に最大200件のみ取得
         outlook_emails = (
             db.session.query(Email)
             .order_by(Email.received_date.desc())
@@ -411,11 +410,11 @@ def get_attachments(message_id, access_token, user_id, notebook_names, category_
 
         # ✅ 1回だけ、日付フォルダにファイル本体をアップロード
         try:
-            uploaded_file_id = google_api.upload_to_drive_and_get_id_by_day(
+            uploaded_file_id, uploaded_file_url = google_api.upload_to_drive_and_get_id_by_day(
                 file_name, file_data, today_folder, app
             )
             if uploaded_file_id:
-                uploaded_file_url = f"https://drive.google.com/file/d/{uploaded_file_id}/view"
+                # uploaded_file_url = f"https://drive.google.com/file/d/{uploaded_file_id}/view"
                 logger.info(f"✅ ファイル {file_name} アップロード完了: {uploaded_file_url}")
             else:
                 logger.error(f"❌ ファイル {file_name} のアップロードに失敗")
@@ -468,6 +467,7 @@ def get_attachments(message_id, access_token, user_id, notebook_names, category_
                         "size": attachment.get('size'),
                         "notebook_name": notebook_name,
                         "category_name": category_name,
+                        "original_url": uploaded_file_url,
                         "url": shortcut_url
                     })
 
@@ -578,11 +578,6 @@ def extract_full_email_data(email, access_token, change_type="created", last_cat
                         )
                 else:
                     logger.info("📌 カテゴリに変更がないため AI 処理はスキップします")
-
-        # if email.get('hasAttachments', False):
-        #     attachments = get_attachments(
-        #         email['id'], access_token, user_id, notebook_names, category_names
-        #     )
 
     else:
         # メールの要約と優先度
